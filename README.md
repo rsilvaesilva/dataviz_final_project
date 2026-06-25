@@ -22,9 +22,11 @@ In this project, I explored ... suspensions over the years for the NFL
 
 **Sample data visualization:** 
 
-
+Original:
 <img width="700" height="432" alt="image" src="https://github.com/user-attachments/assets/fe5d26c9-6655-4d1f-93f7-9bcf0763d3ba" />
-
+Improved:
+<img width="812" height="489" alt="image" src="https://github.com/user-attachments/assets/c84198a2-4786-406f-a0a6-027ef3aba730" />
+This new version is interactive by hovering over the dots to see which team it represents and how many suspension it actually holds.
 
 ## Project 03
 
