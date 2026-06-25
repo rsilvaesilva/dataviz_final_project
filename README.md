@@ -18,14 +18,12 @@ In the `project_01/` folder you can find... my project about American Beliefs an
 
 ## Project 02
 
-In this project, I explored ... _[short description of your revised project goes here]_ Find the code and report in the `project_02/` folder.
+In this project, I explored ... suspensions over the years for the NFL
 
 **Sample data visualization:** 
 
-_[include your favorite visualization from this project here]_
-<img src="https://raw.githubusercontent.com/aalhamadani/dataviz_final_project/main/figures/fl_higher_ed.png" width="80%" height="80%">
 
-(you can place your figures in the `figures/` folder and use the `![](path_to_picture)` option to add the pictures here)
+<img width="700" height="432" alt="image" src="https://github.com/user-attachments/assets/fe5d26c9-6655-4d1f-93f7-9bcf0763d3ba" />
 
 
 ## Project 03
