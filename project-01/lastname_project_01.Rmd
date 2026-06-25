@@ -1,5 +1,5 @@
 ---
-title: "Mini-Project 01"
+title: "Mini-Project 01 American Beliefs"
 output: 
   html_document:
     keep_md: true
@@ -9,4 +9,307 @@ output:
 
 # Data Visualization Project 01
 
-_revised version of mini-project 01 goes here_
+```{r}
+library(tidyverse)
+library(readr)
+#setwd("D:/American-Beliefs-Renato-Silva/Data")
+
+df <- read.csv("data-TRrb5.csv", stringsAsFactors = FALSE)
+
+names(df)[1] <- "Category"
+
+headers <- c(
+  "Religion",
+  "Religious service attendance",
+  "Political party",
+  "Income",
+  "Age",
+  "Gender",
+  "Education"
+)
+
+data <- df %>%
+  filter(!Category %in% headers)
+
+# Convert percentages to numeric
+belief_cols <- c("God", "Angels", "Heaven", "Hell", "The.devil")
+
+data[belief_cols] <- lapply(
+  data[belief_cols],
+  function(x) as.numeric(gsub("%", "", x))
+)
+unique(data$Category)
+```
+
+```{r}
+# Summary Statistics
+
+summary(data[belief_cols])
+
+sapply(data[belief_cols], mean)
+
+sapply(data[belief_cols], median)
+
+sapply(data[belief_cols], sd)
+```
+The summary statistics show that the lowest possible points fall 25% and under and the highest fall 84% and higher, which is pretty considerable distance, with average beliefs being about 50% meaning that Americans are still more likely to believe in God, Heaven, Angels, Hell and the devil. 
+
+```{r}
+# Visualization 1: Religious Service Attendance
+
+attendance <- data %>%
+  filter(Category %in% c(
+    "Weekly",
+    "Nearly Weekly/Monthly",
+    "Less often"
+  ))
+
+attendance_long <- attendance %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(attendance_long,
+       aes(x = Category,
+           y = Percent,
+           fill = Belief)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  labs(
+    title = "Beliefs by Religious Service Attendance",
+    x = "Attendance Frequency",
+    y = "Percent"
+  ) +
+  theme_minimal()
+```
+This is to be expected those that tend to go more often to their religious services be it mass or congregation, they are more likely to hold beliefs in line with their religion and they arent "lukewarm" believers, but the difference between those who go weekly and monthly is not much which is surprising but then again in today's day and age there is seldom much time to go or the energy to go sadly. I also struggle with having the time and energy despite knowing I have an obligation to go, I try to do my best.
+
+```{r}
+# Visualization 2:Political Party
+
+party <- data %>%
+  filter(Category %in% c(
+    "Republican",
+    "Democrat",
+    "Independent"
+  ))
+
+party_long <- party %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(party_long,
+       aes(x = Category,
+           y = Percent,
+           fill = Belief)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  labs(
+    title = "Beliefs by Political Party",
+    x = "Political Party",
+    y = "Percent"
+  ) +
+  theme_minimal()
+```
+These results make sense to me, as a republican myself, most of us are very religious while independents are closer to 50/50 in both politcs and religion and democrats actually surprised me how more than half of them do hold these beliefs despite in my view current democratic policies are against religous beliefs in christianity and the Bible.
+```{r}
+# Visualization 3: Religion
+religion <- data %>%
+  filter(Category %in% c(
+    "Protestant/Other Christian",
+    "Catholic",
+    "None"
+  ))
+
+religion_long <- religion %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(religion_long,
+       aes(x = Category,
+           y = Percent,
+           fill = Belief)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  labs(
+    title = "Religious Beliefs by Religious Affiliation",
+    x = "Religious Affiliation",
+    y = "Percent"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 15, hjust = 1)
+)
+```
+This one is a shocker for me but not many catholics are in the US in the east cost, rather towards the west cost and texas holds the majority of catholics in the US but this data collection came from the north. Not shockigly though is those who do not associate with any religions seldomly believe in anynof the 5 but some still do which that much is interesting, and Protestants fully believing as a great majority in these makes sense.
+```{r}
+# Visualization 4:Income
+
+income <- data %>%
+  filter(Category %in% c(
+    "Less than $40,000",
+    "$40,000-100,000",
+    "$100,000+"
+  ))
+
+income_long <- income %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(income_long,
+       aes(x = Category,
+           y = Percent,
+           fill = Belief)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  labs(
+    title = "Beliefs by Income",
+    x = "Income Group",
+    y = "Percent"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 20, hjust = 1))
+
+```
+Now this has some logic to it, the more money you make the less likely you are to care about religion and the data supports this idea, the less money you make the more likely you are to hold these religious beliefs, but still the majority does believe across all income brackets which is somewhat of a shocker to me.
+
+```{r}
+# Visualization 5:Age
+
+
+age <- data %>%
+  filter(Category %in% c(
+    "18-34",
+    "35-54",
+    "55 and older"
+  ))
+
+age_long <- age %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(age_long,
+       aes(x = Category,
+           y = Percent,
+           fill = Belief)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  labs(
+    title = "Beliefs by Age",
+    x = "Age Group",
+    y = "Percent"
+  ) +
+  theme_minimal()
+
+```
+This one has been changing recently this year, but since the data is from 2024 that wouldnt show but many people around my current age (23) are converting to a religion mainly catholicism in the United States, but still the majority of believers would fall in the 55 and older category as most younger people usually either dont care much at such as young age or plain dislike religous beliefs, and later in life in their 30's is when usually people start to have a more religous life and settle in by their late 50's and the data backs this up.
+
+```{r}
+# Visualization 6:Gender
+
+gender <- data %>%
+  filter(Category %in% c(
+    "Male",
+    "Female"
+  ))
+
+gender_long <- gender %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(gender_long,
+       aes(x = Category,
+           y = Percent,
+           fill = Belief)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  labs(
+    title = "Beliefs by Gender",
+    x = "Gender",
+    y = "Percent"
+  ) +
+  theme_minimal()
+```
+These results are not very surpising in today's day and age women are more devout to their beliefs than men, be it due to lack of time since men are working most of the time or are simply too tired to even attend religious service, but still it is a majority of those interviewed which I will always see it as a plus, but the trend continues where they believe in the positives, God, Heaven and Angels but half do not believe in hell and the devil.
+```{r}
+# Visualization 7:Education
+
+
+education <- data %>%
+  filter(Category %in% c(
+    "College grad",
+    "Not college grad"
+  ))
+
+education_long <- education %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(education_long,
+       aes(x = Category,
+           y = Percent,
+           fill = Belief)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  labs(
+    title = "Beliefs by Education",
+    x = "Education Level",
+    y = "Percent"
+  ) +
+  theme_minimal()
+```
+This makes sense to me as college grads are more likely to be more sinical and logical and not many are religious, but still having more than 50% believe in God and Angels and Heaven but not necesarrily the devil and hell is curious, my belief despite everything there has to be a creator, which I believe full heartedly is the God of the Bible.
+```{r}
+# Visualization 8:Heatmap (All Groups)
+
+heat_data <- data %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(heat_data,
+       aes(x = Belief,
+           y = Category,
+           fill = Percent)) +
+  geom_tile() +
+  scale_fill_gradient(
+    low = "red",
+    high = "darkblue"
+  ) +
+  labs(
+    title = "Religious Beliefs Across Demographic Groups",
+    x = "Belief Type",
+    y = "Demographic Group"
+  ) +
+  theme_minimal()
+```
+Here we can get a better comparison to each category one next to the other, here we can really tell that those that do not believe in any religion really are less likely to believe anything meanwhile overall there is a great variance between age groups, attendance, college grads and household income. (the grey parts are headers which i could not get rid of not matter what I did, I tried asking chatgpt for help here but even if I got rid of those specific headers, new ones would come out grey, and I am not sure why, so I left this original one as it seemed better than others.)
+
+#Conclusion:
+As the world changes so do the beliefs of people and honestly nothing surprised me about this analysis, democrats are less prone to be religious and spiritual in any form as are college students and younger folk, while republicans and older people are more religious overall what did surprise me and I believe this is a data sampling issue is the disparity of Catholics not attending mass, as a Catholic myself it saddens me to see it that Protestants are going to church more often than we are, but I believe not many Catholics were interviewed as the data collection was do in the North of the United States where there is more protestants and Catholics are clustered in the west coast not the east coast. Another interesting factor is how most people tend to believe in the positives (God, Heaven and Angels), and the percentage of those who believe in the negatives (Hell and the devil) is always less than the positives. I wonder why that is, unfortunately the data can't help me conclude that but a hypothesis would be that people prefer to have a positive outlook in life and believe in the goodness of God rather than the abandonment of hell, or simply they don't believe in the portrayal of hell and the devil the interviewer may have asked, if you ask a catholic hell is eternal separation from God, while protestants believe in Dante's hell with layers of fire and suffering, so maybe the phrasing of the question made a difference in their answer but I am simply not sure. Overall these results were expected.
+
+#Process and answers:
+I had to find the data on Kaggle (https://www.kaggle.com/datasets/patricklford/americans-belief-in-spiritual-concepts?resource=download), and then I had to clean up the excel file by getting rid of the empty cells and tidying it up so the data would not look confusing. I wanted to find a data set in which i could have scatter plots about Olympic game medals but it turned to be a bust as I could not find good data to work with, then I found this data set looking for catholic data sets. The story that can be told here is that the older you are, the more right wing you are, if you have not graduated college, you don't make much money, and you are a devout believer that attends religious service you are more likely to believe in God, Heaven, Angels, Hell and the devil. Which overall makes sense to me.
+I applied data visualization principles in this mini project by clearing the data, piping and separating each section properly and bringing it all together to make a more clear comparison.
