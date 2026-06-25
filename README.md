@@ -8,12 +8,12 @@ The following is a sample of products created during the _"Data Visualization an
 
 ## Project 01
 
-In the `project_01/` folder you can find... _[add short description of your revised project here]_
+In the `project_01/` folder you can find... my project about American Beliefs and how they vary based on many aspects of life.
 
 **Sample data visualization:** 
 
-_[include your favorite visualization from this project here]_
-<img src="https://raw.githubusercontent.com/aalhamadani/dataviz_final_project/main/figures/echarts.png" width="70%" height="70%">
+<img width="700" height="432" alt="image" src="https://github.com/user-attachments/assets/cb0ac82c-40e4-4d0b-ba95-d6b48ff4a31c" />
+
 
 
 ## Project 02
