@@ -25,7 +25,7 @@ In this project, I explored ... suspensions over the years for the NFL
 Original:
 <img width="700" height="432" alt="image" src="https://github.com/user-attachments/assets/fe5d26c9-6655-4d1f-93f7-9bcf0763d3ba" />
 Improved:
-<img width="812" height="489" alt="image" src="https://github.com/user-attachments/assets/c84198a2-4786-406f-a0a6-027ef3aba730" />
+<img width="944" height="693" alt="image" src="https://github.com/user-attachments/assets/d09da1d2-6246-4ce3-b0f7-7d97934cbf44" />
 This new version is interactive by hovering over the dots to see which team it represents and how many suspension it actually holds.
 
 ## Project 03
@@ -33,10 +33,10 @@ This new version is interactive by hovering over the dots to see which team it r
 In this project, I explored ... _[short description of the data visualizations you for this part of the project produced goes here]_
 
 **Sample data visualization:** 
-
-_[include your favorite visualization from this project here]_
-<img src="https://raw.githubusercontent.com/aalhamadani/dataviz_final_project/main/figures/concrete_density.png" width="80%" height="80%">
-
+original:
+<img width="944" height="693" alt="image" src="https://github.com/user-attachments/assets/d09da1d2-6246-4ce3-b0f7-7d97934cbf44" />
+Improved:
+<img width="812" height="489" alt="image" src="https://github.com/user-attachments/assets/c84198a2-4786-406f-a0a6-027ef3aba730" />
 
 ### Moving Forward
 
