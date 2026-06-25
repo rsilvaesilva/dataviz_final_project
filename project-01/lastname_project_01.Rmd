@@ -305,6 +305,56 @@ ggplot(heat_data,
   ) +
   theme_minimal()
 ```
+
+```{r, fig.alt="Heat map showing percentages of Americans who believe in God, Angels, Heaven, Hell, and the devil across demographic groups. Darker colors indicate higher percentages, and each tile includes the exact percentage value."}
+
+library(viridis)
+
+heat_data <- data %>%
+  pivot_longer(
+    cols = all_of(belief_cols),
+    names_to = "Belief",
+    values_to = "Percent"
+  )
+
+ggplot(
+  heat_data,
+  aes(
+    x = Belief,
+    y = Category,
+    fill = Percent
+  )
+) +
+  geom_tile(color = "white", linewidth = 0.3) +
+  
+  # Numeric labels so color is not the only encoding
+  geom_text(
+    aes(label = round(Percent, 0)),
+    size = 3
+  ) +
+  
+  scale_fill_viridis_c(
+    option = "viridis",
+    name = "Percent"
+  ) +
+  
+  labs(
+    title = "Religious Beliefs Across Demographic Groups",
+    subtitle = "Percent of respondents expressing each belief",
+    x = "Belief Type",
+    y = "Demographic Group"
+  ) +
+  
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(
+      angle = 30,
+      hjust = 1
+    ),
+    panel.grid = element_blank()
+  )
+```
+This is the new code with better visuals for the heatmap
 Here we can get a better comparison to each category one next to the other, here we can really tell that those that do not believe in any religion really are less likely to believe anything meanwhile overall there is a great variance between age groups, attendance, college grads and household income. (the grey parts are headers which i could not get rid of not matter what I did, I tried asking chatgpt for help here but even if I got rid of those specific headers, new ones would come out grey, and I am not sure why, so I left this original one as it seemed better than others.)
 
 #Conclusion:
