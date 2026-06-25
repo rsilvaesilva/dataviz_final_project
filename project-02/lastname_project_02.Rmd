@@ -9,4 +9,241 @@ output:
 
 # Data Visualization Project 02
 
-_revised version of mini-project 02 goes here_
+```{r}
+#setwd("D:")
+library(tidyverse)
+library(readr)
+library(plotly)
+library(sf)
+library(usmap)
+library(ggrepel)
+library(broom)
+library(htmlwidgets)
+library(ggplot2)
+library(maps)
+library(mapproj)
+```
+
+```{r}
+#I found a data set based on the NFL,which focuses on the suspension for teams and their players, in this report i took the liberty to focus on team's suspensions rather than a players individual suspensions, although I will cover both individuals and teams affected by these suspensions.
+
+nfl <- read.csv("nfl-suspensions-data.csv",
+                stringsAsFactors = FALSE,
+                na.strings = c("", "NA", "N/A", "NULL"))
+
+nfl <- nfl %>%
+  mutate(
+    year = as.numeric(year),
+    games = ifelse(games == "Indef.", 17, games),
+    games = as.numeric(games)
+  )
+
+nfl_clean <- nfl %>%
+  filter(
+    !is.na(year),
+    !is.na(category),
+    !is.na(games)
+  )
+
+nrow(nfl_clean)
+#after cleaning the data I can finally work with it.
+```
+```{r}
+category_summary <- nfl_clean %>%
+  group_by(category) %>%
+  summarize(
+    Suspensions = n(),
+    Avg_Games = mean(games, na.rm = TRUE)
+  ) %>%
+  arrange(desc(Suspensions))
+
+category_summary
+#here we get a summary per category of suspension with how many of each type and the average of when something happens.
+#here we see the averages are pretty low chance to happen per game, but it is interesting to point out that although substance abuse has a relatively low chance of happening, if you are a repeat offender the chances sky rocket in comparison which i found very interesting.
+```
+```{r}
+year_summary <- nfl_clean %>%
+  group_by(year) %>%
+  summarize(
+    Suspensions = n()
+  )
+
+year_summary
+#here i summarize the suspensions by year to understand how often these suspensions were happening on a year-by-year basis. And here we see a huge jump in suspensions in 1989 when new rules were implemented to football to crack down on anabolics such as steroids and lets just say it clearly changed up the playing field with these many suspensions.
+```
+```{r}
+team_summary <- nfl_clean %>%
+  filter(team != "FREE") %>%
+  group_by(team) %>%
+  summarize(
+    Suspensions = n()
+  ) %>%
+  arrange(desc(Suspensions))
+
+team_summary
+#here i arranged the suspensions based on teams and DEN has the most suspensions of the dataset.
+```
+
+```{r}
+p1 <- nfl_clean %>%
+  count(category) %>%
+  ggplot(aes(
+    x = reorder(category, n),
+    y = n,
+    fill = category,
+    text = paste(
+      "Category:", category,
+      "<br>Suspensions:", n
+    )
+  )) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  labs(
+    title = "NFL Suspensions by Category",
+    x = "",
+    y = "Number of Suspensions"
+  ) +
+  theme_minimal()
+
+interactive_plot <- ggplotly(p1, tooltip = "text")
+
+interactive_plot
+#Here with the interactive plot we can remove or add data and have a stronger focus on just one point but we can see that the most suspensions happened due to PEDs (Performance Enhancing Drugs) while in game violence actually has very little suspensions in comparison.
+```
+```{r}
+saveWidget(
+  interactive_plot,
+  "interactive_nfl_suspensions.html",
+  selfcontained = TRUE
+) 
+#Disclosure: "I asked chatgpt to help me save the html as intreactable because I was failing to do so"
+```
+```{r}
+team_locations <- tribble(
+  ~team, ~lon, ~lat,
+  "ARI",-112.2626,33.5276,
+  "ATL",-84.4008,33.7554,
+  "BAL",-76.6227,39.2780,
+  "BUF",-78.7870,42.7738,
+  "CAR",-80.8528,35.2258,
+  "CHI",-87.6167,41.8623,
+  "CIN",-84.5160,39.0954,
+  "CLE",-81.6995,41.5061,
+  "DAL",-97.0929,32.7473,
+  "DEN",-105.0201,39.7439,
+  "DET",-83.0456,42.3400,
+  "GB",-88.0622,44.5013,
+  "HOU",-95.4107,29.6847,
+  "IND",-86.1639,39.7601,
+  "JAX",-81.6373,30.3239,
+  "KC",-94.4839,39.0489,
+  "LA",-118.3392,33.9535,
+  "MIA",-80.2389,25.9580,
+  "MIN",-93.2581,44.9738,
+  "NE",-71.2643,42.0909,
+  "NO",-90.0812,29.9509,
+  "NYG",-74.0745,40.8135,
+  "NYJ",-74.0745,40.8135,
+  "OAK",-122.2005,37.7516,
+  "PHI",-75.1675,39.9008,
+  "PIT",-80.0158,40.4468,
+  "SD",-117.1830,32.7831,
+  "SEA",-122.3316,47.5952,
+  "SF",-121.9698,37.4030,
+  "STL",-90.1887,38.6329,
+  "TB",-82.5033,27.9759,
+  "TEN",-86.7713,36.1665,
+  "WAS",-76.8645,38.9078
+)
+#disclosure: "I wanted to denominate each location of each team to match the america map i found was already integrated on the map and make it so I can pin point them on said map, but I was struggling to do it by name and chatgpt helped me by doing coordinates instead"
+```
+
+```{r}
+map_team_data <- nfl_clean %>%
+  filter(team != "FREE") %>%
+  count(team) %>%
+  left_join(team_locations, by = "team")
+#this allowed the teams to be filtered into the data properly
+```
+```{r}
+#names(map_team_data)
+#I was having issues with names so I had to make sure what was it really named so i can fix the graph below
+```
+
+```{r}
+usa <- map_data("state")
+
+ggplot() +
+  geom_polygon(
+    data = usa,
+    aes(long, lat, group = group),
+    fill = "gray",
+    color = "blue"
+  ) +
+  geom_point(
+    data = map_team_data,
+    aes(x = lon, y = lat, size = n),
+    color = "red",
+    alpha = 0.7
+  ) +
+  coord_fixed(1.3)
+#Here in this graph we can see the geographic locations of the teams and with the size of the circle which ones have the most suspensions and as it would seem the further north you go the more suspensions happen, it is also fair to point out that most NFL teams are from the north of the USA so it makes sense they would hold the most suspensions, but it is a cool thing to note that the Californian teams have very little suspensions.
+```
+```{r}
+year_counts <- nfl_clean %>%
+  group_by(year) %>%
+  summarize(
+    suspensions = n()
+  )
+model <- lm(suspensions ~ year, data = year_counts)
+
+summary(model)
+#this aggregates the data in a way that allows me to make it into a graph, as well as summarize the data for better understanding, and as we can see the variance is great with for most of the years being either at 0 suspsensions or 1, the it sky rockets after 1989, and plummets back down to 1 for the next 11 years where in the new milenium suspensions have become more common.
+```
+```{r}
+ggplot(year_counts,
+       aes(x = year, y = suspensions)) +
+  geom_point(size = 2, color = "darkblue") +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    color = "orange"
+  ) +
+  annotate(
+    "text",
+    x = max(year_counts$year) - 10,
+    y = max(year_counts$suspensions),
+    label = "Linear Trend",
+    size = 5
+  ) +
+  labs(
+    title = "Trend in NFL Suspensions Over Time",
+    subtitle = "Linear Regression Model",
+    x = "Year",
+    y = "Number of Suspensions"
+  ) +
+  theme_minimal()
+#As I said above the trend seems to follow a very positive curve, with no signs of it ever going back down, so it is expected that more and more suspensions happen in the coming years.
+```
+```{r}
+tidy(model) %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x = term, y = estimate)) +
+  geom_col(fill = "lightblue") +
+  geom_errorbar(
+    aes(
+      ymin = estimate - std.error * 1.96,
+      ymax = estimate + std.error * 1.96
+    ),
+    width = .2
+  ) +
+  labs(
+    title = "Model Coefficients",
+    x = "",
+    y = "Estimate"
+  ) +
+  theme_minimal()
+#I decided to add this coefficient to better understand the probability of more suspensions happening the next year, as such there seems to be a plausible 0.35 estimate here according to the graph, thus a 35% chance that the next year will have more suspensions, we also see the plausible region only included around 0.15 and goes up past 0.4, and since this estimate does not include zero it is statistically significant at a 5% level which is what I estimated it to be (95% confidence).
+```
+
+
