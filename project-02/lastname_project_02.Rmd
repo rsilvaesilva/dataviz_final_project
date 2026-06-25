@@ -190,6 +190,38 @@ ggplot() +
 #Here in this graph we can see the geographic locations of the teams and with the size of the circle which ones have the most suspensions and as it would seem the further north you go the more suspensions happen, it is also fair to point out that most NFL teams are from the north of the USA so it makes sense they would hold the most suspensions, but it is a cool thing to note that the Californian teams have very little suspensions.
 ```
 ```{r}
+library(plotly)
+
+interactive_map <- plot_ly(
+  data = map_team_data,
+  type = "scattergeo",
+  mode = "markers",
+  lon = ~lon,
+  lat = ~lat,
+  size = ~n,
+  text = ~paste(
+    "Team:", team,
+    "<br>Suspensions:", n
+  ),
+  hoverinfo = "text",
+  marker = list(
+    color = "red",
+    opacity = 0.75
+  )
+) %>%
+  layout(
+    title = "NFL Suspensions by Team Location",
+    geo = list(
+      scope = "usa",
+      projection = list(type = "albers usa"),
+      showland = TRUE
+    )
+  )
+
+interactive_map
+```
+#An Interactive and improved version of the map visualization
+```{r}
 year_counts <- nfl_clean %>%
   group_by(year) %>%
   summarize(
