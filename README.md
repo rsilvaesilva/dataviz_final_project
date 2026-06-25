@@ -11,10 +11,11 @@ The following is a sample of products created during the _"Data Visualization an
 In the `project_01/` folder you can find... my project about American Beliefs and how they vary based on many aspects of life.
 
 **Sample data visualization:** 
-
+Original:
 <img width="700" height="432" alt="image" src="https://github.com/user-attachments/assets/cb0ac82c-40e4-4d0b-ba95-d6b48ff4a31c" />
-
-
+Improved:
+<img width="700" height="432" alt="image" src="https://github.com/user-attachments/assets/495c0873-4215-4430-82fc-049af2b471a4" />
+Here the map is now colorblind friendly as well as having numbers to identify the data better.
 
 ## Project 02
 
